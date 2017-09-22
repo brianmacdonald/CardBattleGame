@@ -1,0 +1,138 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Card Game Example</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.slim.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+<script>
+    var socket = io.connect("http://localhost:9092");
+    socket.emit('connection');
+    socket.on('battleRound', function (battleRound) {
+        processBattleRound(battleRound);
+        $("#log").text(JSON.stringify(battleRound));
+    });
+    socket.on('battleManager', function (battleManager) {
+        processBattleManager(battleManager);
+    });
+
+    socket.on('gameOver', function () {
+        Materialize.toast("Game Over", 9000);
+    });
+
+    var CardStore = {};
+
+    function createPlayerCard(cardUuid) {
+        var card = findCard(cardUuid);
+        return "<div class='player'>" + card.cardType.cardName + "(" + card.health.current + ")</div>"
+    }
+
+    function createEnemyCard(cardUuid) {
+        var card = findCard(cardUuid);
+        return "<div class='enemy'>" + card.cardType.cardName + "(" + card.health.current + ")</div>"
+    }
+
+    function processBattleManager(battleManager) {
+        updateCardStore(battleManager.cardDataStore.cardMap);
+        updatePlayers(battleManager.player, battleManager.enemy);
+    }
+
+    function processBattleRound(battleRound) {
+        _.forEach(battleRound.enemyActions, function (action) {
+            Materialize.toast("Enemy action: " + action.actionType, 4000);
+        });
+        updatePlayers(battleRound.player, battleRound.enemy);
+    }
+
+    function updateCardStore(cardMap) {
+        CardStore = cardMap;
+    }
+
+    function findCard(cardUuid) {
+        return CardStore[cardUuid];
+    }
+
+    function updatePlayers(player, enemy) {
+        $("#player").empty();
+        $("#enemy").empty();
+        if (player && enemy) {
+            _.forEach(player.cardRefs, function (v, k) {
+                $("#player").append(createPlayerCard(k));
+            });
+            _.forEach(enemy.cardRefs, function (v, k) {
+                $("#enemy").append(createEnemyCard(k));
+            });
+        }
+    }
+
+    $(function () {
+        $("#log").hide();
+        $("#attack").click(function (e) {
+            socket.emit('playerAction', {actions: ['attack']});
+            e.preventDefault();
+        });
+        $("#showLogs").click(function (e) {
+            $("#log").show();
+            e.preventDefault();
+        });
+    });
+</script>
+<div>
+
+    <nav>
+        <div class="nav-wrapper blue">
+            <a href="#" class="brand-logo">Card Game Example</a>
+        </div>
+    </nav>
+
+    <div class="row">
+        <div class="col s12 m6">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Enemy</span>
+                    <div id="enemy">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12 m6">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Player</span>
+                    <div id="player">
+
+                    </div>
+                    <div class="card-action">
+                        <a id="attack" href="#">Attack</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12 m6">
+            <a id="showLogs" href="#">Show Logs</a>
+            <pre id="log"></pre>
+        </div>
+    </div>
+</div>
+</body>
+</html>
