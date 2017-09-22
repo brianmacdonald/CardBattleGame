@@ -7,7 +7,7 @@ import java.net.URL;
 
 public class GameFlowFactoryTest {
 
-    private final URL testGameFileUrl = getClass().getResource("/netcode/GameFlowFactory/testGameFile.json");
+    private final URL testGameFileUrl = getClass().getResource("/netcode/entities/GameFlowFactory/testGameFile.json");
 
     @Test
     public void create() throws Exception {
