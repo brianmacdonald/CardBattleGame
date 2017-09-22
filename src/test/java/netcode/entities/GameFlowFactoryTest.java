@@ -12,7 +12,7 @@ public class GameFlowFactoryTest {
     @Test
     public void create() throws Exception {
         final GameFlowFactory gameFlowFactory = new GameFlowFactory();
-        gameFlowFactory.setGameFileUrl(testGameFileUrl);
+        gameFlowFactory.setGameFilePath(testGameFileUrl.getPath());
         final GameFlow out = gameFlowFactory.create();
         Assert.assertEquals(4, out.getEnemyModel().getRoundsModelList().size());
         Assert.assertEquals("attack", out.getEnemyModel().getRoundsModelList().get(0).getActions().get(0));

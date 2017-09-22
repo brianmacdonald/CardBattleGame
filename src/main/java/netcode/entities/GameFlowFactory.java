@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,13 +24,13 @@ public class GameFlowFactory {
 
     private final Log logger = LogFactory.getLog(GameFlowFactory.class);
 
-    private URL gameFileUrl = getClass().getResource("/Game1.json");
+    private String gameFileUrl = getClass().getResource("/Game1.json").getPath();
 
     public GameFlow create() {
         final ObjectMapper objectMapper = new ObjectMapper();
         final GameFlow gameFlow = new GameFlow();
         try {
-            final File gameFile = new File(this.gameFileUrl.toURI());
+            final File gameFile = new File(this.gameFileUrl);
             final JsonNode node = objectMapper.readValue(gameFile, JsonNode.class);
             final EnemyModel enemyModel = new EnemyModel();
             enemyModel.setRoundsModelList(createRoundsModelList(objectMapper, node));
@@ -68,7 +67,7 @@ public class GameFlowFactory {
         return new ArrayList<>();
     }
 
-    public void setGameFileUrl(final URL gameFileUrl) {
+    public void setGameFilePath(final String gameFileUrl) {
         this.gameFileUrl = gameFileUrl;
     }
 
