@@ -17,4 +17,4 @@ A small Java 8/Spring/Netty card game server.
   - Better client
   - Clearer design and architecture
   - Database integration
-  - Higher test coverage 
+  - More tests
