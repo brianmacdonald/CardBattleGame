@@ -10,16 +10,25 @@
     "defaultAction": "attack",
     "rounds": [
       {
-        "action": ["attack", "foobar"]
+        "action": [
+          "attack",
+          "foobar"
+        ]
       },
       {
-        "action": ["use:FireCard"]
+        "action": [
+          "use:FireCard"
+        ]
       },
       {
-        "action": ["attack"]
+        "action": [
+          "attack"
+        ]
       },
       {
-        "action": ["use:FireCard"]
+        "action": [
+          "use:FireCard"
+        ]
       }
     ],
     "cards": [
